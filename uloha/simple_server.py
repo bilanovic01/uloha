@@ -1,20 +1,17 @@
-import logging
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse
 import psycopg2
 import json
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-
 from spiders.quotes_spider import SrealitySpider
+
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             num_items = self.count_items_in_database()
-            logging.info(f'Number of items in database: {num_items}')
             if num_items == 0:
                 self.run_scraper()
                 time.sleep(10)
@@ -26,6 +23,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(self.generate_html(items).encode())
         except Exception as e:
             self.send_error(500, f'Internal Server Error: {str(e)}')
+
 
     def count_items_in_database(self):
         connection = psycopg2.connect(
@@ -48,6 +46,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         cursor.close()
         connection.close()
         return num_items
+
 
     def fetch_items_from_database(self):
         connection = psycopg2.connect(
@@ -91,11 +90,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         """ % json.dumps(items)
         return html
 
+
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print(f"Server running on http://127.0.0.1:{port}/")
     httpd.serve_forever()
+
 
 if __name__ == '__main__':
     run()

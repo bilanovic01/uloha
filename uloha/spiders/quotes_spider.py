@@ -14,9 +14,6 @@ class SrealitySpider(scrapy.Spider):
       }
 
     def parse(self, response):
-
-        data = response.text
-        print("data", data)
         items = response.xpath('//div[@class="property ng-scope"]')
         self.flats += len(items)
         for item in items:

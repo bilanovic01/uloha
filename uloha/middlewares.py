@@ -1,12 +1,6 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
 from scrapy import signals
 from scrapy.http import HtmlResponse
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,12 +11,9 @@ class SeleniumMiddleware:
     def __init__(self):
         ua = UserAgent()
         userAgent = ua.random
-        print(userAgent)
 
-        # Nastavenie user agenta pre Chrome WebDriver
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument(f'user-agent={userAgent}')
-        # chrome_options = Options()
         chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=chrome_options)
 
